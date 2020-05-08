@@ -7,9 +7,108 @@
     <title>Document</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/locales/tr/faker.tr.min.js"></script>
 </head>
 <body>
 
+<button id="addButton">Add new name</button>
+<button id="loginButton">login</button>
+
+<ul id="list-item"></ul>
+
+<script>
+    faker.seed(123);
+
+    /////////////////////////
+    // let items = [];
+    // let renderList = function () {
+    //     let listElements = items.reduce(function (carry, item) {
+    //         return carry + '<li>' + item + '</li>';
+    //     }, '');
+    //
+    //     $('#list-item').html(listElements);
+    // }
+    //
+    // renderList();
+
+    // $("#addButton").on('click', function () {
+    //     items.push(faker.name.findName());
+    //     renderList();
+    // });
+
+
+    let reducer = function (state, action) {
+        switch (action.type) {
+            case 'ADD_ITEM':
+                return Object.assign({}, state, {items: state.items.concat([action.name])})
+            case 'SET_CURRENT_USER':
+                return Object.assign({}, state, {currentUser: action.payload})
+            default:
+                return state;
+        }
+    };
+
+    let initial = {
+        items: [],
+        currentUser: {}
+    };
+
+    let store = Redux.createStore(reducer, state = initial, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__({
+        trace: true
+    }));
+
+    store.subscribe(function () {
+        let myState = store.getState();
+        renderList(myState.items);
+
+        renderUserInfo(myState.currentUser);
+    });
+
+
+    $("#addButton").on('click', function () {
+        store.dispatch({
+            'type': 'ADD_ITEM',
+            'name': faker.name.findName()
+        })
+    });
+
+
+    $("#loginButton").on('click', function () {
+        store.dispatch({
+            'type': 'SET_CURRENT_USER',
+            payload:{
+                name: 'mahmue',
+                password: 'bayri'
+            }
+        })
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let renderList = function (items) {
+        let listElements = items.reduce(function (carry, item) {
+            return carry + '<li>' + item + '</li>';
+        }, '');
+        $('#list-item').html(listElements);
+    }
+
+
+    let renderUserInfo = function (userInfo) {
+        console.log(userInfo)
+    }
+
+</script>
 
 
 </body>
